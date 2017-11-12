@@ -106,6 +106,7 @@ public class calculate {
 //                        oneOneOneProb = oneOneOneProb + (1 - ZeroOneOneProb);
 //                    }
 
+
                 }
             }
 
@@ -121,6 +122,11 @@ public class calculate {
         System.out.println("1 1 1: "+ oneOneOneProb);
         System.out.println();
 
+        //// Probability Updates
+        double oldProb = probGenderZero;
+        probGenderZero = (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb)/ 20;
+        System.out.println("New Probability of Gender = 0: "+probGenderZero);
+        System.out.println("Thrash Hole: "+ ((probGenderZero - oldProb)/100));
     }
 
     public boolean ZZZ(ArrayList<Integer> x){
