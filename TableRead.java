@@ -61,7 +61,7 @@ public class TableRead {
 //                        table.get(i).add(0);
 //                }
 
-            Calc.findP(table);
+    Calc.findP(table);
 
 //           for (int x = 0; x < 20; x++) {
 //               for (int a = 0; a < 3; a++)
