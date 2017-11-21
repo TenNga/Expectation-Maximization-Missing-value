@@ -5,7 +5,7 @@ import java.util.LinkedList;
  * Created by 10ngawang on 2017-11-10.
  */
 public class calculate {
-    public void findP(LinkedList<ArrayList<Integer>> data) {
+    public void findP(LinkedList<ArrayList<Integer>> data,int x) {
         //Probability table P(Gender)
         double probGenderZero=0.7;
         double probGenderOne = 0.3;
@@ -20,7 +20,19 @@ public class calculate {
         double probHeightZeroGenderOne = 0.3;
         double probHeightOneGenderOne = 0.7;
 
-
+        if(x>0){
+            System.out.println("<----------RAMDOM STARTING POINT------------->");
+            probGenderZero=Math.random();
+            probGenderOne=1-probGenderZero;
+            probWeightZeroGenderZero = Math.random();
+            probWeighOneGenderZero = 1-probWeightZeroGenderZero;
+            probWeighZeroGenderOne = Math.random();
+            probWeighOneGenderOne =1-probWeighZeroGenderOne;
+            probHeightZeroGenderZero = Math.random();
+            probHeightOneGenderZero = 1-probHeightZeroGenderZero;
+            probHeightZeroGenderOne = Math.random();
+            probHeightOneGenderOne = 1-probHeightZeroGenderOne;
+        }
 
 
         double zeroZeroZeroProb=0; //000
@@ -32,15 +44,22 @@ public class calculate {
         double oneZeroOneProb=0;   //101
         double oneOneOneProb=0;    //111
 
-        double newThreshold=1;
+        double newThreshold;
+        newThreshold=Math.abs(Math.log(probGenderZero*probGenderOne* probWeightZeroGenderZero*probWeighOneGenderZero
+                        *probWeighZeroGenderOne*probWeighOneGenderOne*probHeightZeroGenderZero*probHeightOneGenderZero
+                            *probHeightZeroGenderOne*probHeightOneGenderOne));
+      //  System.out.println("First Threshold: "+newThreshold);
         double oldThreshold=3;
+        int iteration=0;
 
-       while(Math.abs(newThreshold-oldThreshold) > 0.001) {
+       while((Math.abs(newThreshold-oldThreshold) ) > 0.001) {
+           System.out.println("---Plot Threshold: "+Math.abs(newThreshold-oldThreshold));
+           iteration++;
        //for(int x=0;x<30;x++){
-           System.out.println("THRESHOLD: "+Math.abs(newThreshold-oldThreshold)+"\n");
+          // System.out.println("THRESHOLD: "+Math.abs(newThreshold-oldThreshold)+"\n");
 
             oldThreshold = newThreshold;
-            newThreshold=1;
+            newThreshold=0;
 
             for (int i = 0; i < data.size(); i++) {
                // System.out.println("Data Size: "+data.size());
@@ -63,7 +82,7 @@ public class calculate {
                 } else if (OOO(data.get(i))) {
                     oneOneOneProb++;
                 } else if (Missing(data.get(i))) {
-                    System.out.println("Missing!!!!");
+                  //  System.out.println("Missing!!!!");
                     double result;
 
 
@@ -103,17 +122,17 @@ public class calculate {
                 } // if inner
             } // for loop end
 
-            System.out.println("G W H  TotalProbability");
-            // System.out.println("-------------------------");
-            System.out.println("0 0 0: " + zeroZeroZeroProb);
-            System.out.println("1 0 0: " + oneZeroZeroProb);
-            System.out.println("0 1 0: " + ZeroOneZeroProb);
-            System.out.println("0 0 1: " + ZeroZeroOneProb);
-            System.out.println("1 1 0: " + OneOneZeroProb);
-            System.out.println("0 1 1: " + ZeroOneOneProb);
-            System.out.println("1 0 1: " + oneZeroOneProb);
-            System.out.println("1 1 1: " + oneOneOneProb);
-            System.out.println();
+//            System.out.println("G W H  TotalProbability");
+//            // System.out.println("-------------------------");
+//            System.out.println("0 0 0: " + zeroZeroZeroProb);
+//            System.out.println("1 0 0: " + oneZeroZeroProb);
+//            System.out.println("0 1 0: " + ZeroOneZeroProb);
+//            System.out.println("0 0 1: " + ZeroZeroOneProb);
+//            System.out.println("1 1 0: " + OneOneZeroProb);
+//            System.out.println("0 1 1: " + ZeroOneOneProb);
+//            System.out.println("1 0 1: " + oneZeroOneProb);
+//            System.out.println("1 1 1: " + oneOneOneProb);
+//            System.out.println();
 
             //// Probability Updates====================================>>>>>>>>>>>>>
             double oldProb;
@@ -122,71 +141,72 @@ public class calculate {
             oldProb = probGenderZero;
             probGenderZero = (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb) / 20;
             System.out.println("New Gender = 0: " + probGenderZero);
-            newThreshold = newThreshold *Math.abs(Math.log(probGenderZero));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold = newThreshold +Math.abs(Math.log(probGenderZero));//-(Math.log(oldProb)));
+          // System.out.println("Threshold= "+Math.log10(probGenderZero));
 
             //P(G=1)
             oldProb = probGenderOne;
             probGenderOne = (oneZeroZeroProb + OneOneZeroProb + oneZeroOneProb + oneOneOneProb) / 20;
             System.out.println("New Gender = 1: " + probGenderOne);
             newThreshold = newThreshold+Math.abs(Math.log(probGenderOne));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(W=0 | G=0)
             oldProb = probWeightZeroGenderZero;
             probWeightZeroGenderZero = ((zeroZeroZeroProb + ZeroZeroOneProb) / (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb));
             System.out.println("New Weight = 0 | Gender = 0: " + probWeightZeroGenderZero);
-            newThreshold = newThreshold*Math.abs(Math.log(probWeightZeroGenderZero));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold = newThreshold+Math.abs(Math.log(probWeightZeroGenderZero));//-(Math.log(oldProb)));
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(W=1 | G=0)
             oldProb = probWeighOneGenderZero;
             probWeighOneGenderZero = ((ZeroOneZeroProb + ZeroOneOneProb) / (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb));
             System.out.println("New Weight = 1 | Gender = 0: " + probWeighOneGenderZero);
-            newThreshold = newThreshold*Math.abs(Math.log(probWeighOneGenderZero));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold = newThreshold+Math.abs(Math.log(probWeighOneGenderZero));//-(Math.log(oldProb)));
+            //System.out.println("Threshold= "+newThreshold);
 
             //P(W=0 | G=1)
             oldProb = probWeighZeroGenderOne;
             probWeighZeroGenderOne = ((oneZeroZeroProb + oneZeroOneProb) / (oneZeroZeroProb + OneOneZeroProb + oneZeroOneProb + oneOneOneProb));
             System.out.println("New Weight = 0 | Gender = 1: " + probWeighZeroGenderOne);
-            newThreshold = newThreshold *Math.abs(Math.log(probWeighZeroGenderOne));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold = newThreshold +Math.abs(Math.log(probWeighZeroGenderOne));//-(Math.log(oldProb)));
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(W=1 | G=1)
             oldProb=probWeighOneGenderOne;
             probWeighOneGenderOne = ((OneOneZeroProb + oneOneOneProb) / (oneZeroZeroProb + OneOneZeroProb + oneZeroOneProb + oneOneOneProb));
             System.out.println("New Weight = 1 | Gender = 1: " + probWeighOneGenderOne);
-            newThreshold = newThreshold*Math.abs(Math.log(probWeighOneGenderOne));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold = newThreshold+Math.abs(Math.log(probWeighOneGenderOne));//-(Math.log(oldProb)));
+            //System.out.println("Threshold= "+newThreshold);
 
             //P(H=0 | G=0)
             oldProb=probHeightZeroGenderZero;
             probHeightZeroGenderZero = ((zeroZeroZeroProb + ZeroOneZeroProb) / (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb));
             System.out.println("New Height =0 | Gender =0: " + probHeightZeroGenderZero);
-            newThreshold=newThreshold*Math.abs(Math.log(probHeightZeroGenderZero));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold=newThreshold+Math.abs(Math.log(probHeightZeroGenderZero));//-(Math.log(oldProb)));
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(H=1 | G=0)
             oldProb=probHeightOneGenderZero;
             probHeightOneGenderZero = ((ZeroZeroOneProb + ZeroOneOneProb) / (zeroZeroZeroProb + ZeroOneZeroProb + ZeroZeroOneProb + ZeroOneOneProb));
             System.out.println("New Height = 1 | Gender = 0: " + probHeightOneGenderZero);
-            newThreshold=newThreshold*Math.abs(Math.log(probHeightOneGenderZero));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold=newThreshold+Math.abs(Math.log(probHeightOneGenderZero));//-(Math.log(oldProb)));
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(H=0 | G=1)
             oldProb=probHeightZeroGenderOne;
             probHeightZeroGenderOne = ((oneZeroZeroProb + OneOneZeroProb) / (oneZeroZeroProb + OneOneZeroProb + oneZeroOneProb + oneOneOneProb));
             System.out.println("New Height = 0 | Gender = 1: " + probHeightZeroGenderOne);
-            newThreshold=newThreshold*Math.abs(Math.log(probHeightZeroGenderOne));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold=newThreshold+Math.abs(Math.log(probHeightZeroGenderOne));//-(Math.log(oldProb)));
+           // System.out.println("Threshold= "+newThreshold);
 
             //P(H=1 | G=1)
             oldProb=probHeightOneGenderOne;
             probHeightOneGenderOne = ((oneZeroOneProb + oneOneOneProb) / (oneZeroZeroProb + OneOneZeroProb + oneZeroOneProb + oneOneOneProb));
             System.out.println("New Height = 1 | Gender = 1: " + probHeightOneGenderOne);
-            newThreshold=newThreshold*Math.abs(Math.log(probHeightOneGenderOne));//-(Math.log(oldProb)));
-            System.out.println("Threshold= "+newThreshold);
+            newThreshold=newThreshold+Math.abs(Math.log(probHeightOneGenderOne));//-(Math.log(oldProb)));
+
+           System.out.println("Threshold= "+newThreshold);
 
 
             System.out.println();
@@ -202,6 +222,7 @@ public class calculate {
 
         }//Big for-loop end
         System.out.println("------> Threshold Reached:====>  "+(Math.abs(newThreshold-oldThreshold)));
+        System.out.println("------> Iteration: "+iteration);
     }// class end
 
     public boolean ZZZ(ArrayList<Integer> x){
